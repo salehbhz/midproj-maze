@@ -34,7 +34,7 @@ int main(){
 
 	// create 2D array to be our maze
 	Room** maze = new Room*[size];
-	for(size_t i{0}; i < size; i++)
+	for(int i{0}; i < size; i++)
 	{
 		maze[i] = new Room[size];
 	}
