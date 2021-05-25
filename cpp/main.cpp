@@ -1,6 +1,7 @@
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
+#include <stdlib.h>
+#include <stdio.h>     
+#include <time.h>  
 #include "room.h"
 
 int getAdjacentRoom(int roomNumber, int size);
@@ -12,22 +13,20 @@ void updatePaths(Room **maze, int size, int oldPath, int newPath);
 
 int main(){
 	int size;
-	int l=1;
+	srand(time(NULL));
 
 	std::cout << "Input the desired side length for the maze (0 for random): ";
 	std::cin >> size;
 
 	while(size <= 3 && size != 0)
 	{
-		// std::cin.clear();
-		// std::cin.ignore();
+		
 		std::cout << "Invalid size. Size must be a positive integer greater";
 		std::cout << " than 3: ";
 		std::cin >> size;
 	}
 	if(size == 0)
 	{
-		srand((unsigned)time(0));
 		size = rand() % 20 + 4;
 		std::cout << "Size randomly selected to be " << size <<std::endl;
 	} 
@@ -39,7 +38,7 @@ int main(){
 		maze[i] = new Room[size];
 	}
 
-	for(int i = 0; i < size; i++)                            //creat a matrix with size , from 0 until (size^2)-1 
+	for(int i = 0; i < size; i++)                           	//creat a matrix with size , from 0 until (size^2)-1 
 	{
 		for(int j = 0; j < size; j++)
 		{
@@ -48,16 +47,18 @@ int main(){
 		}
 	}
 
-	while(!checkComplete(maze, size))
+	while(checkComplete(maze, size))
 	{	
 		int roomCount = size * size;
-		int room = rand() % roomCount;
-		std::cout<<l<<" : "<<room<<std::endl;
-		int adjacentRoom = getAdjacentRoom(room, size);
-		int row1 = mazeRow(room, size);
-		int col1 = mazeColumn(room, size);
-		int row2 = mazeRow(adjacentRoom, size);
+		
+		int room = rand() % roomCount;							//room : from 1 - (size^2)-1
+		int adjacentRoom = getAdjacentRoom(room, size);			//create neighbers of each room
+		
+		int row1 = mazeRow(room, size);							//row1 : random from 1 - (size -1)
+		int col1 = mazeColumn(room, size);						//col1 : random from 1 - (size -1)
+		int row2 = mazeRow(adjacentRoom, size);					
 		int col2 = mazeColumn(adjacentRoom, size);
+
 		if(maze[row1][col1].getPathNumber()!= maze[row2][col2].getPathNumber())
 		{
 			openDoors(&maze[row1][col1], &maze[row2][col2], size);
@@ -70,7 +71,7 @@ int main(){
 				updatePaths(maze, size, maze[row2][col2].getPathNumber(),maze[row1][col1].getPathNumber());
 			}
 		}
-		l++;
+
 	}
 	// Open the north door of Room 0 and the South door of the last room
 	maze[0][0].setNorth(1);
@@ -208,11 +209,11 @@ bool checkComplete(Room **maze, int size)
 		{
 			if(maze[i][j].getPathNumber() != 0)
 			{
-				return false;
+				return true;
 			}
 		}
 	}
-	return true;
+	return false;
 }
 
 void updatePaths(Room **maze, int size, int oldPath, int newPath)

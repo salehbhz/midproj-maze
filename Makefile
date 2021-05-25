@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -std=c++2a -Wall -I h -I /usr/local/include/gtest/ -c
 LXXFLAGS = -std=c++2a -Ih -pthread
-OBJECTS =   ./obj/main.o  
+OBJECTS =   ./obj/main.o  ./obj/room.o
 
 TARGET = main
 
