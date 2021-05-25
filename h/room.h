@@ -1,6 +1,8 @@
 #ifndef ROOM_H
 #define ROOM_H
 
+#include"maze.h"
+
 class Room
 {
 	private:
