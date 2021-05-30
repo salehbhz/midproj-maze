@@ -19,8 +19,22 @@ Maze::Maze(const int inputHeight, const int inputWidth): height{ inputHeight }, 
 			
 		}
 		maze.push_back(mazeRow);
+		
 	}
-	
+
+	// set target node
+	int targetRow = height - 1;
+	int targetCol = width - 1;
+	targetNode = &maze[targetRow][targetCol];
+
+	// set start and current node
+	int startRow = 0;
+	int startCol = 0;
+	startNode = &maze[startRow][startCol];
+	openlist.push_back(startNode);
+	startNode->open=true;
+
+
 	std::cout << "The width of the maze is " << width << std::endl;
 	std::cout << "The height of the maze is " << height << std::endl;
 	
@@ -116,4 +130,98 @@ void Maze::generateMaze()
 		}
 	}
 	std::cout << "Maze has been generated!\n";
+}
+
+void Maze::solveBfs() 
+{
+	int f=0;
+	while(true)
+	{
+		
+		currentNode=openlist[f];
+		//remove currentnode from openlist
+		// openlist.pop_back();
+		currentNode->open=false;
+		
+		//add current node to closelist
+		closedlist.push_back(currentNode);
+		currentNode->closed=true;
+		
+		if(currentNode==targetNode){break;}
+		
+		for(int j=-1 ; j<2 ; j++)
+		{
+			
+			for(int i=-1;i<2;i++)
+			{
+				
+				
+				if (i == j || i == -j || (i == 0 && j == 0)) 
+				{
+					
+					continue;
+				}
+				
+				if (currentNode->row + i < 0 || currentNode->col + j < 0 || currentNode->row + i >= height || currentNode->col + j >= width) 
+				{
+					continue;
+				}
+				
+				if (maze[currentNode->row + i][currentNode->col + j].closed) 
+				{
+					continue;
+				}
+				
+				if (i == -1 && j == 0 && maze[currentNode->row][currentNode->col].northWall ) 
+				{
+					continue;
+				}
+				
+				if (i == 0 && j == 1 && maze[currentNode->row][currentNode->col].eastWall) 
+				{
+					continue;
+				}
+				
+				if (i == 1 && j == 0 && maze[currentNode->row + 1][currentNode->col].northWall)
+				{
+					continue;
+				}
+				
+				if (i == 0 && j == -1 && maze[currentNode->row][currentNode->col - 1].eastWall) 
+				{
+					continue;
+				}
+
+				NeighbourNode = &maze[currentNode->row + i][currentNode->col + j];
+				
+				if ( !NeighbourNode->open) 
+				{
+				
+					// set parent of neighbour to current
+					NeighbourNode->parent = currentNode;
+					NeighbourNode->search = true;
+					
+					NeighbourNode->open = true;
+					openlist.push_back(NeighbourNode);
+					
+				}
+			}
+
+		}
+		f++;
+	}
+
+
+	currentNode = targetNode;
+	while (currentNode != startNode) 
+	{
+		currentNode->path = true;
+		currentNode = currentNode->parent;
+	}
+	startNode->path = true;
+	
+	std::cout << "Maze has been solved!\n";
+	std::cout << "x = path, o = search area\n";
+
+
 }
