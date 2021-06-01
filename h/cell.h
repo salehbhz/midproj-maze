@@ -7,15 +7,18 @@ class Cell {
 		int row = 0;
 		int col = 0;
 
-		// only need to manipulate 2 walls for each cell since cells share walls
+		
 		bool northWall = true;
 		bool eastWall = true;
 
-	
+		
 		bool open = false;
 		bool closed = false;
 
-		Cell* parent = nullptr;
+		
+		Cell* child=nullptr;
+		Cell* parent=nullptr;
+
 		bool path = false;
 		bool search = false;
 

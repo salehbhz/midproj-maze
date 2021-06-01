@@ -225,3 +225,100 @@ void Maze::solveBfs()
 
 
 }
+
+
+bool Maze::solveDfs(Cell* node) 
+{
+	std::list<Cell*>a;
+	
+	currentNode=node;
+	
+		//remove currentnode from openlist
+		
+		currentNode->open=false;
+		
+		//add current node to closelist
+		closedlist.push_back(currentNode);
+		currentNode->closed=true;
+
+
+		for(int j=-1 ; j<2 ; j++)
+		{
+			
+			for(int i=-1;i<2;i++)
+			{
+				
+				
+				if (i == j || i == -j || (i == 0 && j == 0)) 
+				{
+					
+					continue;
+				}
+				
+				if (currentNode->row + i < 0 || currentNode->col + j < 0 || currentNode->row + i >= height || currentNode->col + j >= width) 
+				{
+					continue;
+				}
+				
+				if (maze[currentNode->row + i][currentNode->col + j].closed) 
+				{
+					continue;
+				}
+				
+				if (i == -1 && j == 0 && maze[currentNode->row][currentNode->col].northWall ) 
+				{
+					continue;
+				}
+				
+				if (i == 0 && j == 1 && maze[currentNode->row][currentNode->col].eastWall) 
+				{
+					continue;
+				}
+				
+				if (i == 1 && j == 0 && maze[currentNode->row + 1][currentNode->col].northWall)
+				{
+					continue;
+				}
+				
+				if (i == 0 && j == -1 && maze[currentNode->row][currentNode->col - 1].eastWall) 
+				{
+					continue;
+				}
+
+				NeighbourNode = &maze[currentNode->row + i][currentNode->col + j];
+				NeighbourNode->parent = currentNode;
+				currentNode->child=NeighbourNode;
+				NeighbourNode->search = true;
+
+				if ( !NeighbourNode->open) 
+				{
+					a.push_back(NeighbourNode);
+					// set parent of neighbour to current
+					NeighbourNode->open = true;
+					
+				}
+			}
+		}
+		for(auto i:a)
+		{
+			if(i==targetNode)
+			{
+			std::cout<<"1"<<std::endl;
+			while (i != startNode) 
+			{
+				i->path = true;
+				i = i->parent;
+			}
+			startNode->path = true;
+	
+			std::cout << "Maze has been solved!\n";
+			std::cout << "x = path, o = search area\n";
+			return true;
+			}
+			else
+				solveDfs(i);
+		}
+
+	return false;
+
+}
