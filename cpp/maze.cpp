@@ -322,3 +322,211 @@ bool Maze::solveDfs(Cell* node)
 	return false;
 
 }
+
+void Maze::displayMaze() const 
+{
+
+	for (auto const& mazeRow : maze) {
+
+		// print top/bottom walls
+		for (auto const& cell : mazeRow) {
+			std::cout << "+";
+			// print if top wall is true
+			if (cell.northWall) {
+				std::cout << "---";
+			}
+			else {
+				std::cout << "   ";
+			}
+		}
+		std::cout << "+" << std::endl;
+
+
+		// print left/right walls on next line
+		std::cout << "|";
+		for (auto const& cell : mazeRow) {
+			// print if right wall if true ( x = path, o = searched node but not part of path)
+			
+			if (!cell.end&&!cell.start&&cell.eastWall && cell.path && !cell.search) 
+			{ 
+				// std::cout << " x |";
+				fputc(' ', stdout);
+				fputs("\033[0;32m", stdout);
+        		fputs("د", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc('|', stdout);
+
+			}
+			else if (cell.start&&!cell.end&&cell.eastWall && cell.path && !cell.search) 
+			{ 
+				// std::cout << " x |";
+				fputc(' ', stdout);
+				fputs("\033[0;34m", stdout);
+        		fputs("S", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc('|', stdout);
+
+			}
+
+			else if (cell.end&&!cell.start&&cell.eastWall && cell.path && !cell.search) 
+			{ 
+				// std::cout << " x |";
+				fputc(' ', stdout);
+				fputs("\033[0;33m", stdout);
+        		fputs("E", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc('|', stdout);
+
+			}
+
+			//---------------------------------------------------
+
+			else if (cell.eastWall && !cell.path && !cell.search) 
+			{ 
+				// std::cout << "   |";
+				fputc(' ', stdout);
+				fputc(' ', stdout);
+				fputc(' ', stdout);
+				fputc('|', stdout);
+			}
+			//-----------------------------------------------------
+			else if (!cell.end&&!cell.start&&!cell.eastWall && cell.path && !cell.search) 
+			{ 
+				// std::cout << " x  ";
+				fputc(' ', stdout);
+				fputs("\033[0;32m", stdout);
+        		fputs("د", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc(' ', stdout);
+				
+			}
+			else if (cell.start&&!cell.end&&!cell.eastWall && cell.path && !cell.search) 
+			{ 
+				// std::cout << " x  ";
+				fputc(' ', stdout);
+				fputs("\033[0;34m", stdout);
+        		fputs("S", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc(' ', stdout);
+				
+			}
+			else if (cell.end&&!cell.start&&!cell.eastWall && cell.path && !cell.search) 
+			{ 
+				// std::cout << " x  ";
+				fputc(' ', stdout);
+				fputs("\033[0;33m", stdout);
+        		fputs("E", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc(' ', stdout);
+				
+			}
+			//--------------------------------------------------------------
+			else if (!cell.end&&!cell.start&&cell.eastWall && cell.path && cell.search) 
+			{
+				// std::cout << " x |";
+				fputc(' ', stdout);
+				fputs("\033[0;32m", stdout);
+        		fputs("د", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc('|', stdout);
+			}
+			else if (cell.start&&!cell.end&&cell.eastWall && cell.path && cell.search) 
+			{
+				// std::cout << " x |";
+				fputc(' ', stdout);
+				fputs("\033[0;34m", stdout);
+        		fputs("S", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc('|', stdout);
+			}
+			else if (cell.end&&!cell.start&&cell.eastWall && cell.path && cell.search) 
+			{
+				// std::cout << " x |";
+				fputc(' ', stdout);
+				fputs("\033[0;33m", stdout);
+        		fputs("E", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc('|', stdout);
+			}
+			//---------------------------------------------------------------------
+			else if (cell.eastWall && !cell.path && cell.search) 
+			{ 
+				// std::cout << " o |";
+				fputc(' ', stdout);
+				fputs("\033[0;91m", stdout);
+        		fputs("غ", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc('|', stdout);
+			}
+			else if (!cell.eastWall && !cell.path && cell.search) 
+			{ 
+				// std::cout << " o  ";
+				fputc(' ', stdout);
+				fputs("\033[0;91m", stdout);
+        		fputs("غ", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc(' ', stdout);
+				
+				
+			}
+			//------------------------------------------------------------------------
+			else if (!cell.end&&!cell.start&&!cell.eastWall && cell.path && cell.search) 
+			{ 
+				// std::cout << " x  ";
+				fputc(' ', stdout);
+				fputs("\033[0;32m", stdout);
+        		fputs("د", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc(' ', stdout);
+				
+			}
+			else if (cell.start&&!cell.end&&!cell.eastWall && cell.path && cell.search) 
+			{ 
+				// std::cout << " x  ";
+				fputc(' ', stdout);
+				fputs("\033[0;32m", stdout);
+        		fputs("د", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc(' ', stdout);
+				
+			}
+			else if (cell.end&&!cell.start&&!cell.eastWall && cell.path && cell.search) 
+			{ 
+				// std::cout << " x  ";
+				fputc(' ', stdout);
+				fputs("\033[0;33m", stdout);
+        		fputs("E", stdout);
+				fputs("\033[0m", stdout);
+				fputc(' ', stdout);
+				fputc(' ', stdout);
+				
+			}
+			else 
+			{
+				std::cout << "    "; 
+			}
+		}
+		std::cout << std::endl;
+
+	}
+
+	// print final bottom walls
+	for (int i = 0; i < width; i++) {
+		std::cout << "+---";
+	}
+	std::cout << "+" << std::endl;
+
+}
