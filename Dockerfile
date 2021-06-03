@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 RUN apt-get -qq update \
     && apt-get -qq install --no-install-recommends cmake \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/as/*
 
 RUN git clone --depth=1 -b master https://github.com/google/googletest.git
 RUN mkdir googletest/build

@@ -3,33 +3,38 @@
 
 #include "cell.h"
 #include <vector>
-#include <string>
+#include<iostream>
+#include<list>
+#include <cstdlib>
+#include <ctime>
 
-class Maze {
+class Maze 
+{
 	public:
 		// constructor and methods
-		
-		Maze(const int inputHeight = 10, const int inputWidth = 10);
+		Maze(const int _height, const int _width,const int _startRow,const int _startCol,const int _endRow,const int _endCol,const char _solve);
+
 		void displayMaze() const;
 		void generateMaze();
 		void solveBfs();
-		// bool solveDfs(Cell*);
-		// void solveDfs();
+		bool solveDfs(Cell*);
+		
 	private:
 		Cell* targetNode;
 		Cell* startNode;
 	    Cell* currentNode;
-		
+		Cell* NeighbourNode=nullptr; 		// initialise neighbouring cell pointers to nullptr
 
-		Cell* NeighbourNode=nullptr; 			// initialise neighbouring cell pointers to nullptr
 		int height;
 		int width;
+		int startRow ;
+		int startCol ;
+		int targetRow ;
+		int targetCol ;
 
 		std::vector<std::vector<Cell>> maze;   	// 2d maze vector
-
-		std::vector<Cell*>openlist;
-		std::vector<Cell*>closedlist;
-
+		std::vector<Cell*>cell_searching;
+		std::vector<Cell*>cell_searched;
 };
 
 #endif

@@ -1,11 +1,14 @@
-#include <iostream>
 #include "maze.h"
 #include "cell.h"
-#include <ctime>
-#include <fstream>
 
-// initialising dimensions
-Maze::Maze(const int inputHeight, const int inputWidth): height{ inputHeight }, width{ inputWidth } 
+//------------------------------constructor----------------------------
+Maze::Maze(const int _height, const int _width,const int _startRow,const int _startCol,const int _endRow,const int _endCol,const char _solve):
+	height{ _height },
+	width{ _width } ,
+	startRow{_startRow},
+	startCol{_startCol},
+	targetRow{_endRow},
+	targetCol{_endCol}
 {
 	for (int i = 0; i < height; i++) 
 	{
@@ -19,29 +22,48 @@ Maze::Maze(const int inputHeight, const int inputWidth): height{ inputHeight }, 
 			
 		}
 		maze.push_back(mazeRow);
-		
 	}
 
 	// set target node
-	int targetRow = height - 1;
-	int targetCol = width - 1;
-	targetNode = &maze[targetRow][targetCol];
+
+	targetNode = &maze[targetRow-1][targetCol-1];
+	targetNode->end=true;
 
 	// set start and current node
-	int startRow = 0;
-	int startCol = 0;
-	startNode = &maze[startRow][startCol];
-	openlist.push_back(startNode);
+
+	startNode = &maze[startRow-1][startCol-1];
+	cell_searching.push_back(startNode);
 	startNode->open=true;
+	startNode->start=true;
 
 
 	std::cout << "The width of the maze is " << width << std::endl;
 	std::cout << "The height of the maze is " << height << std::endl;
 	
-	
-	generateMaze();
-	displayMaze();
+	switch(_solve)
+	{
+		case 'D':
+		{
+			generateMaze();
+			displayMaze();
+			std::cout << "\n\nMaze has been solved with DFS algorithm!\n";
+			solveDfs(startNode);
+			displayMaze();
+			
+		};break;
+		case 'B':
+		{
+			generateMaze();
+			displayMaze();
+			std::cout << "\n\nMaze has been solved with BFS algorithm!\n";
+			solveBfs();
+			displayMaze();
+		}
+	}
+
 }
+
+//-----------------------------Generator-------------------------------
 
 void Maze::generateMaze() 
 {
@@ -132,22 +154,27 @@ void Maze::generateMaze()
 	std::cout << "Maze has been generated!\n";
 }
 
+//--------------------------------BFS-----------------------------------
+
 void Maze::solveBfs() 
 {
-	int f=0;
+	int depth=0;
 	while(true)
-	{
-		
-		currentNode=openlist[f];
-		//remove currentnode from openlist
-		// openlist.pop_back();
+	{	
+
+		currentNode=cell_searching[depth];
+			
 		currentNode->open=false;
 		
+		
+		//remove currentnode from cell_searching
+		if(currentNode==targetNode){break;}
+		
+		
 		//add current node to closelist
-		closedlist.push_back(currentNode);
+		cell_searched.push_back(currentNode);
 		currentNode->closed=true;
 		
-		if(currentNode==targetNode){break;}
 		
 		for(int j=-1 ; j<2 ; j++)
 		{
@@ -200,15 +227,13 @@ void Maze::solveBfs()
 					// set parent of neighbour to current
 					NeighbourNode->parent = currentNode;
 					NeighbourNode->search = true;
-					
 					NeighbourNode->open = true;
-					openlist.push_back(NeighbourNode);
-					
+					cell_searching.push_back(NeighbourNode);
 				}
 			}
 
 		}
-		f++;
+		depth++;
 	}
 
 
@@ -220,25 +245,42 @@ void Maze::solveBfs()
 	}
 	startNode->path = true;
 	
-	std::cout << "Maze has been solved!\n";
-	std::cout << "x = path, o = search area\n";
+	fputs("\033[0;32m", stdout);
+    fputs("X", stdout);
+	fputs("\033[0m", stdout);
+	std::cout <<" = path , ";   
+				
+	fputs("\033[0;91m", stdout);
+    fputs(".", stdout);
+	fputs("\033[0m", stdout);
+	std::cout <<" = search area , ";
 
+	fputs("\033[0;34m", stdout);
+    fputs("S", stdout);
+	fputs("\033[0m", stdout);
+	std::cout <<" = startNode , ";
+
+	fputs("\033[0;33m", stdout);
+    fputs("E", stdout);
+	fputs("\033[0m", stdout);
+	std::cout<<" = EndNode\n";
+	std::cout<<"startNode = ("<<startRow<<","<<startCol<<")\n";
+	std::cout<<"endNode = ("<<targetRow<<","<<targetCol<<")\n";
 
 }
 
-
+//---------------------------------DFS----------------------------------
 bool Maze::solveDfs(Cell* node) 
 {
-	std::list<Cell*>a;
-	
+	std::list<Cell*>LIST;
 	currentNode=node;
 	
-		//remove currentnode from openlist
+		//remove currentnode from cell_searching
 		
 		currentNode->open=false;
 		
 		//add current node to closelist
-		closedlist.push_back(currentNode);
+		cell_searched.push_back(currentNode);
 		currentNode->closed=true;
 
 
@@ -292,36 +334,59 @@ bool Maze::solveDfs(Cell* node)
 
 				if ( !NeighbourNode->open) 
 				{
-					a.push_back(NeighbourNode);
+					LIST.push_back(NeighbourNode);
 					// set parent of neighbour to current
 					NeighbourNode->open = true;
 					
 				}
 			}
 		}
-		for(auto i:a)
+		for(auto child:LIST)
 		{
-			if(i==targetNode)
+			if(child==targetNode)
 			{
-			std::cout<<"1"<<std::endl;
-			while (i != startNode) 
-			{
-				i->path = true;
-				i = i->parent;
-			}
-			startNode->path = true;
-	
-			std::cout << "Maze has been solved!\n";
-			std::cout << "x = path, o = search area\n";
-			return true;
+				while (child != startNode) 
+				{
+					child->path = true;
+					child = child->parent;
+				}
+				startNode->path = true;
+
+				fputs("\033[0;32m", stdout);
+        		fputs("X", stdout);
+				fputs("\033[0m", stdout);
+				std::cout <<" = path , ";   
+				
+				fputs("\033[0;91m", stdout);
+        		fputs(".", stdout);
+				fputs("\033[0m", stdout);
+				std::cout <<" = search area , ";
+
+				fputs("\033[0;34m", stdout);
+        		fputs("S", stdout);
+				fputs("\033[0m", stdout);
+				std::cout <<" = startNode , ";
+
+				fputs("\033[0;33m", stdout);
+        		fputs("E", stdout);
+				fputs("\033[0m", stdout);
+				std::cout<<" = EndNode\n";
+
+				std::cout<<"startNode = ("<<startRow<<","<<startCol<<")\n";
+				std::cout<<"endNode = ("<<targetRow<<","<<targetCol<<")\n";
+				return true;
 			}
 			else
-				solveDfs(i);
+			{
+				solveDfs(child);
+			}
 		}
 
 	return false;
 
 }
+
+//-------------------------------Display-------------------------------
 
 void Maze::displayMaze() const 
 {
@@ -349,10 +414,9 @@ void Maze::displayMaze() const
 			
 			if (!cell.end&&!cell.start&&cell.eastWall && cell.path && !cell.search) 
 			{ 
-				// std::cout << " x |";
 				fputc(' ', stdout);
 				fputs("\033[0;32m", stdout);
-        		fputs("د", stdout);
+        		fputs("X", stdout);
 				fputs("\033[0m", stdout);
 				fputc(' ', stdout);
 				fputc('|', stdout);
@@ -360,7 +424,6 @@ void Maze::displayMaze() const
 			}
 			else if (cell.start&&!cell.end&&cell.eastWall && cell.path && !cell.search) 
 			{ 
-				// std::cout << " x |";
 				fputc(' ', stdout);
 				fputs("\033[0;34m", stdout);
         		fputs("S", stdout);
@@ -372,7 +435,6 @@ void Maze::displayMaze() const
 
 			else if (cell.end&&!cell.start&&cell.eastWall && cell.path && !cell.search) 
 			{ 
-				// std::cout << " x |";
 				fputc(' ', stdout);
 				fputs("\033[0;33m", stdout);
         		fputs("E", stdout);
@@ -386,7 +448,6 @@ void Maze::displayMaze() const
 
 			else if (cell.eastWall && !cell.path && !cell.search) 
 			{ 
-				// std::cout << "   |";
 				fputc(' ', stdout);
 				fputc(' ', stdout);
 				fputc(' ', stdout);
@@ -395,10 +456,9 @@ void Maze::displayMaze() const
 			//-----------------------------------------------------
 			else if (!cell.end&&!cell.start&&!cell.eastWall && cell.path && !cell.search) 
 			{ 
-				// std::cout << " x  ";
 				fputc(' ', stdout);
 				fputs("\033[0;32m", stdout);
-        		fputs("د", stdout);
+        		fputs("X", stdout);
 				fputs("\033[0m", stdout);
 				fputc(' ', stdout);
 				fputc(' ', stdout);
@@ -406,7 +466,6 @@ void Maze::displayMaze() const
 			}
 			else if (cell.start&&!cell.end&&!cell.eastWall && cell.path && !cell.search) 
 			{ 
-				// std::cout << " x  ";
 				fputc(' ', stdout);
 				fputs("\033[0;34m", stdout);
         		fputs("S", stdout);
@@ -417,7 +476,6 @@ void Maze::displayMaze() const
 			}
 			else if (cell.end&&!cell.start&&!cell.eastWall && cell.path && !cell.search) 
 			{ 
-				// std::cout << " x  ";
 				fputc(' ', stdout);
 				fputs("\033[0;33m", stdout);
         		fputs("E", stdout);
@@ -429,17 +487,15 @@ void Maze::displayMaze() const
 			//--------------------------------------------------------------
 			else if (!cell.end&&!cell.start&&cell.eastWall && cell.path && cell.search) 
 			{
-				// std::cout << " x |";
 				fputc(' ', stdout);
 				fputs("\033[0;32m", stdout);
-        		fputs("د", stdout);
+        		fputs("X", stdout);
 				fputs("\033[0m", stdout);
 				fputc(' ', stdout);
 				fputc('|', stdout);
 			}
 			else if (cell.start&&!cell.end&&cell.eastWall && cell.path && cell.search) 
 			{
-				// std::cout << " x |";
 				fputc(' ', stdout);
 				fputs("\033[0;34m", stdout);
         		fputs("S", stdout);
@@ -449,7 +505,6 @@ void Maze::displayMaze() const
 			}
 			else if (cell.end&&!cell.start&&cell.eastWall && cell.path && cell.search) 
 			{
-				// std::cout << " x |";
 				fputc(' ', stdout);
 				fputs("\033[0;33m", stdout);
         		fputs("E", stdout);
@@ -460,20 +515,18 @@ void Maze::displayMaze() const
 			//---------------------------------------------------------------------
 			else if (cell.eastWall && !cell.path && cell.search) 
 			{ 
-				// std::cout << " o |";
 				fputc(' ', stdout);
 				fputs("\033[0;91m", stdout);
-        		fputs("غ", stdout);
+        		fputs(".", stdout);
 				fputs("\033[0m", stdout);
 				fputc(' ', stdout);
 				fputc('|', stdout);
 			}
 			else if (!cell.eastWall && !cell.path && cell.search) 
 			{ 
-				// std::cout << " o  ";
 				fputc(' ', stdout);
 				fputs("\033[0;91m", stdout);
-        		fputs("غ", stdout);
+        		fputs(".", stdout);
 				fputs("\033[0m", stdout);
 				fputc(' ', stdout);
 				fputc(' ', stdout);
@@ -483,10 +536,9 @@ void Maze::displayMaze() const
 			//------------------------------------------------------------------------
 			else if (!cell.end&&!cell.start&&!cell.eastWall && cell.path && cell.search) 
 			{ 
-				// std::cout << " x  ";
 				fputc(' ', stdout);
 				fputs("\033[0;32m", stdout);
-        		fputs("د", stdout);
+        		fputs("X", stdout);
 				fputs("\033[0m", stdout);
 				fputc(' ', stdout);
 				fputc(' ', stdout);
@@ -494,10 +546,9 @@ void Maze::displayMaze() const
 			}
 			else if (cell.start&&!cell.end&&!cell.eastWall && cell.path && cell.search) 
 			{ 
-				// std::cout << " x  ";
 				fputc(' ', stdout);
 				fputs("\033[0;32m", stdout);
-        		fputs("د", stdout);
+        		fputs("S", stdout);
 				fputs("\033[0m", stdout);
 				fputc(' ', stdout);
 				fputc(' ', stdout);
@@ -505,7 +556,6 @@ void Maze::displayMaze() const
 			}
 			else if (cell.end&&!cell.start&&!cell.eastWall && cell.path && cell.search) 
 			{ 
-				// std::cout << " x  ";
 				fputc(' ', stdout);
 				fputs("\033[0;33m", stdout);
         		fputs("E", stdout);

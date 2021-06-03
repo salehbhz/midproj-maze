@@ -8,7 +8,7 @@ int main()
 	std::cout<<std::endl;
 	std::cout<<"---------------------------------------------------------------------------------------------------------"<<std::endl;
 	
-	std::cout<<"\nif you want generate random maze with random startnode and endnode press ---> R , Manual press ---> M : ";
+	std::cout<<"\nif you want generate random maze  press ---> R , Manual press ---> M : ";
 	std::cin>>Ran;
 	std::cout<<std::endl;
 
@@ -41,7 +41,7 @@ int main()
 			{
 				std::cin.clear();
 				std::cin.ignore();
-				std::cout << "Invalid startRow. startRow must be (1 < startRow < height) : ";
+				std::cout << "Invalid startRow. startRow must be (1 < startRow < "<<height<<") : ";
 				std::cin >> startRow;
 			}
 
@@ -51,7 +51,7 @@ int main()
 			{
 				std::cin.clear();
 				std::cin.ignore();
-				std::cout << "Invalid startCol. startCol must be (1 < startCol < width) : ";
+				std::cout << "Invalid startCol. startCol must be (1 < startCol < "<<width<<") : ";
 				std::cin >> startCol;
 			}
 			std::cout<<std::endl;
@@ -62,7 +62,7 @@ int main()
 			{
 				std::cin.clear();
 				std::cin.ignore();
-				std::cout << "Invalid endRow. endRow must be (1 < endRow < width) : ";
+				std::cout << "Invalid endRow. endRow must be (1 < endRow < "<<height<<") : ";
 				std::cin >> endRow;
 			}
 			
@@ -72,7 +72,7 @@ int main()
 			{
 				std::cin.clear();
 				std::cin.ignore();
-				std::cout << "Invalid endCol. endCol must be (1 < endCol < width) : ";
+				std::cout << "Invalid endCol. endCol must be (1 < endCol < "<<width<<") : ";
 				std::cin >> endCol;
 			}
 			std::cout<<std::endl;
@@ -80,8 +80,8 @@ int main()
 		case 'R':
 		{
 			srand(time(0));
-			height = rand() % 20+10 ;
-			width = rand() % 20+10;
+			height = rand() % 40+5 ;
+			width = rand() % 40+5;
 			startRow = (rand() % (height-1))+1 ;
 			startCol = (rand() % (width-1))+1 ;
 			endRow = (rand() % (height-1))+1 ;
@@ -109,7 +109,7 @@ int main()
 		std::cin >> ch;
 	}
 	std::cout<<std::endl;
-	std::cout<<"---------------------------------------------------------------------------------------------------------\n\n\n\n";
+	std::cout<<"---------------------------------------------------------------------------------------------------------\n\n";
 	Maze maze(height, width,startRow,startCol,endRow,endCol,ch);
 	
 
