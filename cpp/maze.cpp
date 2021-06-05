@@ -161,14 +161,14 @@ void Maze::solveBfs()
 	int depth=0;
 	while(true)
 	{	
-
+		
 		currentNode=cell_searching[depth];
-			
+		currentNode->search = true;
 		currentNode->open=false;
 		
-		
-		//remove currentnode from cell_searching
 		if(currentNode==targetNode){break;}
+		//remove currentnode from cell_searching
+		
 		
 		
 		//add current node to closelist
@@ -226,7 +226,7 @@ void Maze::solveBfs()
 				
 					// set parent of neighbour to current
 					NeighbourNode->parent = currentNode;
-					NeighbourNode->search = true;
+					
 					NeighbourNode->open = true;
 					cell_searching.push_back(NeighbourNode);
 				}
@@ -547,7 +547,7 @@ void Maze::displayMaze() const
 			else if (cell.start&&!cell.end&&!cell.eastWall && cell.path && cell.search) 
 			{ 
 				fputc(' ', stdout);
-				fputs("\033[0;32m", stdout);
+				fputs("\033[0;34m", stdout);
         		fputs("S", stdout);
 				fputs("\033[0m", stdout);
 				fputc(' ', stdout);
